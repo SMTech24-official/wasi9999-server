@@ -6,6 +6,7 @@ import catchAsync from "../../../shared/catchAsync";
 import sendResponse from "../../../shared/sendResponse";
 import { AuthServices } from "./auth.service";
 import { authValidation } from "./auth.validation";
+import ApiError from "../../../errors/ApiErrors";
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.loginUser(req.body);
@@ -110,21 +111,23 @@ const forgotPassword = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Check your email!",
-    data: data,
+    message:"Verify your email! Please reset your password",
+    data: data.data,
   });
 });
 
 const resetPassword = catchAsync(async (req: Request, res: Response) => {
-  const token = req.headers.authorization || "";
-  console.log(token, 'rest token')
+  const { resetPassToken, newPassword } = req.body;
+  if (!resetPassToken || !newPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid reset token");
+  }
 
-  await AuthServices.resetPassword(token, req.body);
+  await AuthServices.resetPassword(resetPassToken, newPassword);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Password Reset!",
+    message: "Password Reset Successfully!",
     data: null,
   });
 });

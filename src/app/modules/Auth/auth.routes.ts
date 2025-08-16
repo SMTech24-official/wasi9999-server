@@ -27,7 +27,6 @@ router.post("/logout",auth(), AuthController.logoutUser);
 
 router.get("/get-me", auth(), AuthController.getMyProfile);
 
-// router.post("/social-login", AuthController.socialLogin);
 
 router.put(
   "/change-password",
@@ -38,5 +37,7 @@ router.put(
 router.post("/forgot-password", AuthController.forgotPassword);
 
 router.post("/reset-password", AuthController.resetPassword);
+
+// router.post("/social-login", AuthController.socialLogin);
 
 export const AuthRoutes = router;

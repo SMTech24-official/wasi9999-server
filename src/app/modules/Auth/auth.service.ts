@@ -207,82 +207,48 @@ const getMyProfile = async (userId: string) => {
   return exitingUser;
 };
 
-const forgotPassword = async (payload: { email: string }) => {
+const forgotPassword = async (payload: { email: string; otp: string }) => {
   const userData = await prisma.user.findUnique({
     where: {
       email: payload.email,
+      otp: Number(payload.otp),
     },
   });
   if (!userData) {
     throw new ApiError(404, "User not found");
   }
+  if (userData.otp !== Number(payload.otp)) {
+    throw new ApiError(404, "Your otp is incorrect");
+  }
 
+  if (userData.otpExpiry && userData.otpExpiry < new Date()) {
+  }
   const resetPassToken = jwtHelpers.generateToken(
     { email: userData.email, role: userData.role },
     config.jwt.reset_pass_secret as Secret,
     config.jwt.reset_pass_token_expires_in as string
   );
 
-  const resetPassLink =
-    config.reset_pass_link + `?userId=${userData.id}&token=${resetPassToken}`;
+  await prisma.user.update({
+    where: {
+      id: userData.id,
+    },
+    data: {
+      otp: null,
+      otpExpiry: null,
+    },
+  });
 
-  await emailSender(
-    "Reset Your Password",
-    userData.email,
-    `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Reset Request</title>
-</head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa; margin: 0; padding: 20px; line-height: 1.6; color: #333333;">
-    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-        <div style="background-color: #005D81; padding: 30px 20px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">Password Reset Request</h1>
-        </div>
-        <div style="padding: 40px 30px;">
-            <p style="font-size: 16px; margin-bottom: 20px;">Dear User,</p>
-            
-            <p style="font-size: 16px; margin-bottom: 30px;">We received a request to reset your password. Click the button below to reset your password:</p>
-            
-            <div style="text-align: center; margin-bottom: 30px;">
-                <a href=${resetPassLink} style="display: inline-block; background-color: #005D81; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: 600; transition: background-color 0.3s ease;">
-                    Reset Password
-                </a>
-            </div>
-            
-            <p style="font-size: 16px; margin-bottom: 20px;">If you did not request a password reset, please ignore this email or contact support if you have any concerns.</p>
-            
-            <p style="font-size: 16px; margin-bottom: 0;">Best regards,<br>Your Support Team</p>
-        </div>
-        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 14px; color: #6c757d;">
-            <p style="margin: 0 0 10px;">This is an automated message, please do not reply to this email.</p>
-            <p style="margin: 0;">© 2023 Your Company Name. All rights reserved.</p>
-        </div>
-    </div>
-</body>
-</html>`
-  );
   return {
-    message: "Reset password link sent via your email successfully",
+    data: {
+      resetPassToken,
+    },
   };
 };
 
 // reset password
-const resetPassword = async (
-  token: string,
-  payload: { userId: string; password: string }
-) => {
-  const userData = await prisma.user.findUnique({
-    where: {
-      id: payload.userId,
-    },
-  });
-
-  if (!userData) {
-    throw new ApiError(404, "User not found");
-  }
+const resetPassword = async (token: string, newPassword: string) => {
+  // verify token
 
   const isValidToken = jwtHelpers.verifyToken(
     token,
@@ -293,13 +259,23 @@ const resetPassword = async (
     throw new ApiError(httpStatus.FORBIDDEN, "Forbidden!");
   }
 
+  console.log(isValidToken, "isValidToken");
+  const userData = await prisma.user.findUnique({
+    where: {
+      email: isValidToken.email,
+    },
+  });
+
+  if (!userData) {
+    throw new ApiError(404, "User not found");
+  }
   // hash password
-  const password = await bcrypt.hash(payload.password, 12);
+  const password = await bcrypt.hash(newPassword, 12);
 
   // update into database
   await prisma.user.update({
     where: {
-      id: payload.userId,
+      id: userData.id,
     },
     data: {
       password,
@@ -307,8 +283,6 @@ const resetPassword = async (
   });
   return { message: "Password reset successfully" };
 };
-
-
 
 
 // change password
