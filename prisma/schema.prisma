@@ -28,11 +28,39 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Category {
+model Shift {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  name  String
-  color String? @default("#ffffff")
+  role        String
+  location    String
+  date        DateTime
+  startTime   String
+  endTime     String
+  payAmount   Float
+  vacancy     Int      @default(1)
+  description String
+  isUrgent    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BookShift {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @db.ObjectId
+  shiftId String @db.ObjectId
+  status  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AssignWorker {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  organizerId String @db.ObjectId
+  bookShiftId String @db.ObjectId
+  status      String
+  isPaid      String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -42,7 +70,7 @@ enum UserRole {
   ADMIN
   SUPER_ADMIN
   USER
-  SELLER
+  ORGANIZER
 }
 
 enum UserStatus {

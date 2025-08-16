@@ -210,8 +210,7 @@ const getMyProfile = async (userId: string) => {
 const forgotPassword = async (payload: { email: string; otp: string }) => {
   const userData = await prisma.user.findUnique({
     where: {
-      email: payload.email,
-      otp: Number(payload.otp),
+      email: payload.email
     },
   });
   if (!userData) {
