@@ -4,6 +4,7 @@ import { AuthRoutes } from "../modules/Auth/auth.routes";
 import { UserRoutes } from "../modules/User/user.route";
 import { shiftRoutes } from "../modules/Shift/Shift.route";
 import { bookshiftRoutes } from "../modules/BookShift/BookShift.route";
+import { contactRoutes } from "../modules/Contact/Contact.route";
 
 
 // import { paymentRoutes } from "../modules/Payment/payment.route";
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: "/book-shift",
     route: bookshiftRoutes,
+  },
+  {
+    path: "/contact",
+    route: contactRoutes,
   },
   
   

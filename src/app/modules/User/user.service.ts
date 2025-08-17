@@ -185,7 +185,6 @@ const updateUser = async (id: string, payload: Partial<User>) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "This user not found");
   }
-
   const result = await prisma.user.update({
     where: { id },
     data: payload,

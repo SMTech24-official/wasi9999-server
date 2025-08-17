@@ -17,6 +17,7 @@ model User {
   role         UserRole
   password     String
   profileImage String?
+  document     String?
 
   userStatus UserStatus @default(ACTIVE)
   isDeleted  Boolean    @default(false)
@@ -86,12 +87,23 @@ model AssignWorker {
   bookShift BookShift @relation(fields: [bookShiftId], references: [id], onDelete: Cascade)
 }
 
+model Contact {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  email   String
+  subject String
+  message String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Payment {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   workerId      String        @db.ObjectId
-  bookShiftId       String        @db.ObjectId
+  bookShiftId   String        @db.ObjectId
   amount        Float
-  status        PaymentStatus @default(UNPAID) 
+  status        PaymentStatus @default(UNPAID)
   paymentDate   DateTime?
   transactionId String?
 

@@ -42,6 +42,14 @@ router.patch(
   UserController.updateUser
 );
 
+// update user
+router.patch(
+  "/upload-document",
+  auth(),
+  fileUploader.upload.single("document"),
+  UserController.updateDocument
+);
+
 // block user
 router.patch(
   "/:id",

@@ -21,6 +21,40 @@ const createBookShift = async (data: TBookShift) => {
   return result;
 };
 
+const getAllBookShiftsByOrganizer = async (
+  query: Record<string, any>,
+  userId: string
+) => {
+  const queryBuilder = new QueryBuilder(prisma.bookShift, query);
+  const bookshifts = await queryBuilder
+    .search([""])
+    .filter()
+    .rawFilter({
+      shift: {
+        userId,
+      },
+    })
+    .sort()
+    .paginate()
+    .fields()
+    .include({
+      worker: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          phoneNumber: true,
+          profileImage: true,
+        },
+      },
+      shift: true,
+    })
+    .execute();
+
+  const meta = await queryBuilder.countTotal();
+  return { meta, data: bookshifts };
+};
+
 const getAllBookShifts = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(prisma.bookShift, query);
   const bookshifts = await queryBuilder
@@ -93,6 +127,7 @@ const deleteBookShift = async (id: string) => {
 
 export const bookshiftService = {
   createBookShift,
+  getAllBookShiftsByOrganizer,
   getAllBookShifts,
   getSingleBookShift,
   updateBookShift,
