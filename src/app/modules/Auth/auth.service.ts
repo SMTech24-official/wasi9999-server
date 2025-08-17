@@ -189,11 +189,12 @@ const getMyProfile = async (userId: string) => {
     },
     select: {
       id: true,
-      fullName:true,
+      fullName: true,
       phoneNumber: true,
       email: true,
       role: true,
       profileImage: true,
+      speciality: true,
       userStatus: true,
       createdAt: true,
       updatedAt: true,

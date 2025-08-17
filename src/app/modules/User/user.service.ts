@@ -166,6 +166,7 @@ const getUserById = async (id: string) => {
       fullName: true,
       email: true,
       phoneNumber: true,
+      speciality: true,
       role: true,
       profileImage: true,
       userStatus: true,
