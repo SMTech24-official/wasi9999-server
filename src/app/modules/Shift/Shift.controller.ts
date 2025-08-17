@@ -5,7 +5,8 @@ import httpStatus from "http-status";
 import { shiftService } from "./Shift.service";
 
 const createShift = catchAsync(async (req: Request, res: Response) => {
-    const result = await shiftService.createShift(req.body);
+    const userId = req.user.id
+    const result = await shiftService.createShift({...req.body, userId});
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
         success: true,

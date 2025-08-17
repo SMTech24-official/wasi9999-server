@@ -11,6 +11,13 @@ const router = express.Router();
 
 // const uploadSingle = fileUploader.upload.single("profileImage");
 
+// register organizer
+router.post(
+  "/register-organizer",
+  validateRequest(UserValidation.CreateUserValidationSchema),
+  UserController.createOrganizer
+);
+
 // register user
 router.post(
   "/register",

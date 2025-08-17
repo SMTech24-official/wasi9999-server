@@ -30,6 +30,10 @@ router.put(
 );
 
 // delete shift
-router.delete("/:id", shiftController.deleteShift);
+router.delete(
+  "/:id",
+  auth(UserRole.ORGANIZER, UserRole.SUPER_ADMIN),
+  shiftController.deleteShift
+);
 
 export const shiftRoutes = router;

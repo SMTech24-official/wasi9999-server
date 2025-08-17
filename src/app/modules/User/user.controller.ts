@@ -6,6 +6,17 @@ import sendResponse from "../../../shared/sendResponse";
 import { User } from "@prisma/client";
 import config from "../../../config";
 
+const createOrganizer = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.createOrganizer(req.body);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Organizer Registered Successfully",
+    data: result,
+  });
+});
+
+
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createUser(req.body);
   sendResponse(res, {
@@ -85,6 +96,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const UserController = {
+  createOrganizer,
   createUser,
   getUserById,
   updateUser,
