@@ -12,6 +12,7 @@ model User {
   fullName    String
   email       String @unique
   phoneNumber String
+  speciality String?
 
   role         UserRole
   password     String
@@ -82,4 +83,11 @@ enum NotificationType {
   ORDER
   PAYMENT
   BOOKING
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED // The shift has been worked and is finished.
+  CANCELLED
 }

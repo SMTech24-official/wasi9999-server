@@ -25,7 +25,7 @@ const userUpdateSchema = z.object({
   body: z.object({
     fullName: z.string().optional(),
     phoneNumber: z.string().optional(),
-    
+    speciality: z.string().optional(),
   }),
 });
 

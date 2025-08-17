@@ -26,17 +26,17 @@ router.get(
 );
 
 // update user
-router.put(
+router.patch(
   "/update-me",
   auth(),
-  fileUploader.uploadMultiple,
+  fileUploader.upload.single("profileImage"),
   parseBodyData,
   validateRequest(UserValidation.userUpdateSchema),
   UserController.updateUser
 );
 
 // block user
-router.put(
+router.patch(
   "/:id",
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   UserController.blockUser
