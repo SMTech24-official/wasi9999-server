@@ -6,6 +6,7 @@ import { shiftRoutes } from "../modules/Shift/Shift.route";
 import { bookshiftRoutes } from "../modules/BookShift/BookShift.route";
 import { contactRoutes } from "../modules/Contact/Contact.route";
 import { documentRoutes } from "../modules/Document/Document.route";
+import { assignworkerRoutes } from "../modules/AssignWorker/AssignWorker.route";
 
 
 // import { paymentRoutes } from "../modules/Payment/payment.route";
@@ -34,6 +35,10 @@ const moduleRoutes = [
   {
     path: "/book-shift",
     route: bookshiftRoutes,
+  },
+  {
+    path: "/assign-worker",
+    route: assignworkerRoutes,
   },
   {
     path: "/contact",

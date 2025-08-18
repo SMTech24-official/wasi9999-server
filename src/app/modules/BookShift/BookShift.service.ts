@@ -58,7 +58,7 @@ const getAllBookShiftsByOrganizer = async (
       shift: true,
     })
     .execute();
-
+  
   const meta = await queryBuilder.countTotal();
   return { meta, data: bookshifts };
 };
