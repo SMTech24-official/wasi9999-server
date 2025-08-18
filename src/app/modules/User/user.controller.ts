@@ -59,24 +59,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const updateDocument = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
 
-  let document;
-  if (req.file) {
-    document = `${config.backend_image_url}/${req.file.filename}`
-  }
-  const updateData = { document };
-
-  const result = await UserService.updateUser(userId, updateData);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Document updated successfully!",
-    data: result,
-  });
-});
 
 const blockUser = catchAsync(async (req: Request, res: Response) => {
   const userId = req.params.id;
@@ -119,7 +102,6 @@ export const UserController = {
   createUser,
   getUserById,
   updateUser,
-  updateDocument,
   deleteUser,
   getAllUsers,
   blockUser,

@@ -18,6 +18,14 @@ const createBookShift = async (data: TBookShift) => {
     throw new ApiError(httpStatus.CONFLICT, "BookShift already exists");
   }
   const result = await prisma.bookShift.create({ data });
+  await prisma.shift.update({
+    where: {
+      id: data.shiftId,
+    },
+    data: {
+      status: "APPLIED",
+    },
+  });
   return result;
 };
 
