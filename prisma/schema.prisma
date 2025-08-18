@@ -89,7 +89,7 @@ model BookShift {
 model AssignWorker {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   organizerId   String        @db.ObjectId
-  bookShiftId   String        @db.ObjectId
+  bookShiftId   String        @db.ObjectId @unique
   paymentStatus PaymentStatus @default(UNPAID)
 
   createdAt DateTime @default(now())

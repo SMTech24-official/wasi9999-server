@@ -1,14 +1,15 @@
 import { Server } from "http";
 import app from "./app";
 import config from "./config";
-// import cron from "node-cron";
+import cron from "node-cron";
+import { updateShiftStatuses } from "./utils/updateUserStatus";
 
 // Main function to start the server
 function main() {
-  // cron.schedule("0 * * * *", async () => {
-  //   console.log("corn job updated every hour.");
+  cron.schedule("0 * * * *", async () => {
+    await updateShiftStatuses();
 
-  // });
+  });
 
   const server: Server = app.listen(Number(config.port) ,() => {
     console.log(

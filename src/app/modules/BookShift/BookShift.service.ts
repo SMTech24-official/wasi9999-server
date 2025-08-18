@@ -58,7 +58,7 @@ const getAllBookShiftsByOrganizer = async (
       shift: true,
     })
     .execute();
-  
+
   const meta = await queryBuilder.countTotal();
   return { meta, data: bookshifts };
 };
@@ -90,9 +90,9 @@ const getAllBookShifts = async (query: Record<string, any>) => {
               email: true,
               phoneNumber: true,
               profileImage: true,
-            }
-          }
-        }
+            },
+          },
+        },
       },
     })
     .execute();
@@ -145,8 +145,136 @@ const deleteBookShift = async (id: string) => {
   return null;
 };
 
+const getUserShiftStatus = async (userId: string) => {
+  const notifications = [];
+
+  // --- Scenario 1: Tomorrow's Shifts (Need Attention) ---
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+
+  const dayAfterTomorrow = new Date(tomorrow);
+  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 1);
+
+  const tomorrowShifts = await prisma.bookShift.findMany({
+    where: {
+      userId: userId,
+      status: "ASSIGNED",
+      shift: {
+        date: {
+          gte: tomorrow,
+          lt: dayAfterTomorrow,
+        },
+      },
+    },
+    include: {
+      shift: true,
+    },
+  });
+
+  if (tomorrowShifts.length > 0) {
+    notifications.push({
+      type: "Need Attention",
+      message: `${tomorrowShifts.length} shifts are scheduled for tomorrow. Are you prepared?`,
+      shifts: tomorrowShifts.map((bs) => bs.shift),
+    });
+  }
+
+  // --- Scenario 2: Today's Shifts (In Progress) ---
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const tomorrowForTodayCheck = new Date(today);
+  tomorrowForTodayCheck.setDate(tomorrowForTodayCheck.getDate() + 1);
+
+  const todayShifts = await prisma.bookShift.findMany({
+    where: {
+      userId: userId,
+      status: "ASSIGNED",
+      shift: {
+        date: {
+          gte: today,
+          lt: tomorrowForTodayCheck,
+        },
+      },
+    },
+    include: {
+      shift: true,
+    },
+  });
+
+  if (todayShifts.length > 0) {
+    notifications.push({
+      type: "In Progress",
+      message: `${todayShifts.length} shifts are ongoing today.`,
+      shifts: todayShifts.map((bs) => bs.shift),
+    });
+  }
+
+  // --- Scenario 3: Completed Shifts (In Progress - for payment) ---
+  const shiftsPendingPayment = await prisma.assignWorker.findMany({
+    where: {
+      paymentStatus:"UNPAID",
+      bookShift: {
+        userId: userId,
+        status: "COMPLETED",
+      },
+    },
+    include: {
+      bookShift: {
+        include: {
+          shift: true,
+        },
+      },
+    },
+  });
+  // console.log(shiftsPendingPayment, 'shiftsPendingPayment');
+
+  if (shiftsPendingPayment.length > 0) {
+    notifications.push({
+      type: "In Progress",
+      message: `${shiftsPendingPayment.length} shifts have been approved for payment.`,
+      shifts: shiftsPendingPayment.map((aw) => aw.bookShift.shift),
+    });
+  }
+
+  // --- Scenario 4: Paid Shifts (Finalized) ---
+  const shiftsFinalized = await prisma.assignWorker.findMany({
+    where: {
+      organizerId: userId,
+      paymentStatus: "PAID",
+    },
+    include: {
+      bookShift: {
+        include: {
+          shift: true,
+        },
+      },
+    },
+  });
+
+  if (shiftsFinalized.length > 0) {
+    notifications.push({
+      type: "Finalized",
+      message: `${shiftsFinalized.length} shifts with payroll.`,
+      shifts: shiftsFinalized.map((aw) => aw.bookShift.shift),
+    });
+  }
+
+  if (notifications.length > 0) {
+    return notifications;
+  } else {
+    return {
+      type: "No Active Shifts",
+      message: "No shifts requiring attention at this time",
+      shifts: [],
+    };
+  }
+};
+
 export const bookshiftService = {
   createBookShift,
+  getUserShiftStatus,
   getAllBookShiftsByOrganizer,
   getAllBookShifts,
   getSingleBookShift,

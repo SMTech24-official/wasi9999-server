@@ -18,6 +18,10 @@ router.post(
 // get all bookshift for user
 router.get("/my-bookshift-user", auth(UserRole.USER), bookshiftController.getAllMyBookShiftsByUser);
 
+
+// get all bookshift for user
+router.get("/bookshift-status", auth(UserRole.USER), bookshiftController.getBookingShiftStatus);
+
 //get all my shift booking, for Organizer
 router.get("/my-bookshift-organizer", auth(UserRole.ORGANIZER), bookshiftController.getAllBookShiftsByOrganizer);
 

@@ -27,6 +27,20 @@ const getAllMyBookShiftsByUser = catchAsync(async (req: Request, res: Response) 
         data: results.data,
     });
 });
+const getBookingShiftStatus = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const results = await bookshiftService.getUserShiftStatus(
+      userId
+    );
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User BookShifts retrieved successfully",
+      data: results
+    });
+  }
+);
 const getAllBookShiftsByOrganizer = catchAsync(async (req: Request, res: Response) => {
     const userId = req.user.id
     const results = await bookshiftService.getAllBookShiftsByOrganizer(req.query, userId);
@@ -81,6 +95,7 @@ const deleteBookShift = catchAsync(async (req: Request, res: Response) => {
 
 export const bookshiftController = {
     createBookShift,
+    getBookingShiftStatus,
     getAllMyBookShiftsByUser,
     getAllBookShiftsByOrganizer,
     getAllBookShifts,
