@@ -81,7 +81,19 @@ const getAllBookShifts = async (query: Record<string, any>) => {
           profileImage: true,
         },
       },
-      shift: true,
+      shift: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              phoneNumber: true,
+              profileImage: true,
+            }
+          }
+        }
+      },
     })
     .execute();
 
