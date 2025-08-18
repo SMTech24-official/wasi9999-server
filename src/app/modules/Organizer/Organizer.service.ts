@@ -23,6 +23,8 @@ const getUserOrganizer = async (workerId: string) => {
       // You can add other relevant fields here
     },
   });
+
+  return organizers;
 };
 
 const getShiftByOrganizer = async (organizerId: string, workerId: string) => {
@@ -57,6 +59,8 @@ const getShiftByOrganizer = async (organizerId: string, workerId: string) => {
         },
       },
     });
+  
+  return shiftsForOrganizer;
 
 }
 export const organizerService = {
