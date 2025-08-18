@@ -6,10 +6,13 @@ import { documentService } from "./Document.service";
 import config from "../../../config";
 
 const createDocument = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user.id
+    req.body.userId = userId
     if (req.file) {
         req.body.documentUrl = `${config.backend_image_url}/${req.file.filename}`;
         req.body.name = req.file.originalname
     }
+
     const result = await documentService.createDocument(req.body);
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
