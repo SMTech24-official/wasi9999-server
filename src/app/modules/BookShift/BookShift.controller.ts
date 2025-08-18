@@ -74,6 +74,7 @@ const getSingleBookShift = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateBookShift = catchAsync(async (req: Request, res: Response) => {
+    
     const result = await bookshiftService.updateBookShift(req.params.id, req.body);
     sendResponse(res, {
         statusCode: httpStatus.OK,

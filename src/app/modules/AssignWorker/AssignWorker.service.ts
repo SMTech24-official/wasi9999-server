@@ -28,16 +28,15 @@ const createAssignWorker = async (data: {
   if (bookingShift.shift.userId !== data.organizerId) {
     throw new ApiError(httpStatus.NOT_FOUND, "You are not authorized..!!");
   }
-    const existingAssignWorker = await prisma.assignWorker.findUnique({
-      where: {
-        bookShiftId: data.bookShiftId,
-      },
-    });
-    if (existingAssignWorker) {
-      throw new ApiError(httpStatus.CONFLICT, "AssignWorker already exists");
-    }
-    
-    
+  const existingAssignWorker = await prisma.assignWorker.findUnique({
+    where: {
+      bookShiftId: data.bookShiftId,
+    },
+  });
+  if (existingAssignWorker) {
+    throw new ApiError(httpStatus.CONFLICT, "AssignWorker already exists");
+  }
+
   //checking vacancy
   const existing = await prisma.assignWorker.findMany({
     where: {
@@ -48,7 +47,6 @@ const createAssignWorker = async (data: {
   if (existing.length >= bookingShift.shift.vacancy) {
     throw new ApiError(httpStatus.NOT_FOUND, "Vacancy is full..!!");
   }
-  
 
   const result = await prisma.$transaction(async (tx) => {
     const assignWorker = await tx.assignWorker.create({ data });
@@ -93,6 +91,7 @@ const getAllAssignWorkers = async (query: Record<string, any>) => {
       },
       bookShift: {
         select: {
+          status: true,
           shift: {
             select: {
               role: true,
@@ -136,7 +135,8 @@ const getSingleAssignWorker = async (id: string) => {
         },
       },
       bookShift: {
-        select: {
+          select: {
+            status: true,
           shift: {
             select: {
               role: true,

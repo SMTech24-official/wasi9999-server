@@ -202,6 +202,7 @@ const getUserShiftStatus = async (userId: string) => {
       shift: true,
     },
   });
+  console.log(todayShifts, "todayShifts");
 
   if (todayShifts.length > 0) {
     notifications.push({
@@ -241,9 +242,10 @@ const getUserShiftStatus = async (userId: string) => {
   // --- Scenario 4: Paid Shifts (Finalized) ---
   const shiftsFinalized = await prisma.assignWorker.findMany({
     where: {
-      organizerId: userId,
       paymentStatus: "PAID",
-    },
+      bookShift: {
+        userId: userId,
+      }},
     include: {
       bookShift: {
         include: {
