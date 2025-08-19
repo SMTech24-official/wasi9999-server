@@ -40,8 +40,10 @@ const getAllShiftsRole= catchAsync(
 );
 
 const getAllShifts = catchAsync(async (req: Request, res: Response) => {
-    const {outlet, ...rest} = req.query
-    const results = await shiftService.getAllShifts(rest, outlet ? outlet : undefined);
+    const { outlet, ...rest } = req.body
+    const { date, role, ...restQuery } = req.query
+    
+    const results = await shiftService.getAllShifts({...rest, ...restQuery}, outlet ? outlet : undefined);
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,

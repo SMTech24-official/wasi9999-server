@@ -33,14 +33,17 @@ const uniqueRoles = await prisma.shift.findMany({
 return uniqueRoles
 }
 
-const getAllShifts = async (query: Record<string, any>, outlet:any) => {
+const getAllShifts = async (query: Record<string, any>, outlet: any) => {
+
   const queryBuilder = new QueryBuilder(prisma.shift, query);
   const shifts = await queryBuilder
     .search(["role", "location", "startTime", "endTime"])
     .filter()
     .rawFilter({
       user: {
-        fullName: outlet,
+        fullName: {
+          in: outlet,
+        },
       },
     })
     .sort()
