@@ -10,7 +10,7 @@ const createShift = async (data: any) => {
 };
 
 const getAllShiftsOrganizerName = async () => {
-  const result = await prisma.user.findMany({
+  const organizerName = await prisma.user.findMany({
     where: {
       role: "ORGANIZER",
     },
@@ -19,7 +19,18 @@ const getAllShiftsOrganizerName = async () => {
     }
   })
 
-  return result
+  return organizerName
+}
+
+const getAllShiftsRole= async () => {
+const uniqueRoles = await prisma.shift.findMany({
+  distinct: ["role"],
+  select: {
+    role: true,
+  },
+});
+  
+return uniqueRoles
 }
 
 const getAllShifts = async (query: Record<string, any>, outlet:any) => {
@@ -94,6 +105,7 @@ const deleteShift = async (id: string) => {
 export const shiftService = {
   createShift,
   getAllShiftsOrganizerName,
+  getAllShiftsRole,
   getAllShifts,
   getSingleShift,
   updateShift,
