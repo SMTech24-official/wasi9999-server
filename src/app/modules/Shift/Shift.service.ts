@@ -9,11 +9,16 @@ const createShift = async (data: any) => {
   return result;
 };
 
-const getAllShifts = async (query: Record<string, any>) => {
+const getAllShifts = async (query: Record<string, any>, outlet:any) => {
   const queryBuilder = new QueryBuilder(prisma.shift, query);
   const shifts = await queryBuilder
-    .search([""])
+    .search(["role", "location", "startTime", "endTime"])
     .filter()
+    .rawFilter({
+      user: {
+        fullName: outlet,
+      },
+    })
     .sort()
     .paginate()
     .fields()

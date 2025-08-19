@@ -16,7 +16,8 @@ const createShift = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllShifts = catchAsync(async (req: Request, res: Response) => {
-    const results = await shiftService.getAllShifts(req.query);
+    const {outlet, ...rest} = req.query
+    const results = await shiftService.getAllShifts(rest, outlet ? outlet : undefined);
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
