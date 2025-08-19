@@ -15,6 +15,18 @@ const createShift = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getAllShiftsOrganizerName = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await shiftService.getAllShiftsOrganizerName();
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Organizer Name retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 const getAllShifts = catchAsync(async (req: Request, res: Response) => {
     const {outlet, ...rest} = req.query
     const results = await shiftService.getAllShifts(rest, outlet ? outlet : undefined);
@@ -63,4 +75,5 @@ export const shiftController = {
     getSingleShift,
     updateShift,
     deleteShift,
+    getAllShiftsOrganizerName
 };

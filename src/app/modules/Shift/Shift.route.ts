@@ -18,6 +18,9 @@ router.post(
 // get all shift
 router.get("/", auth(), shiftController.getAllShifts);
 
+// get all organizer name
+router.get("/organizer-name", auth(), shiftController.getAllShiftsOrganizerName);
+
 // get single shift by id
 router.get("/:id", auth(), shiftController.getSingleShift);
 

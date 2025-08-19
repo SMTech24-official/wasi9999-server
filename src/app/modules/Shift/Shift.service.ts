@@ -9,6 +9,19 @@ const createShift = async (data: any) => {
   return result;
 };
 
+const getAllShiftsOrganizerName = async () => {
+  const result = await prisma.user.findMany({
+    where: {
+      role: "ORGANIZER",
+    },
+    select: {
+      fullName: true,
+    }
+  })
+
+  return result
+}
+
 const getAllShifts = async (query: Record<string, any>, outlet:any) => {
   const queryBuilder = new QueryBuilder(prisma.shift, query);
   const shifts = await queryBuilder
@@ -80,6 +93,7 @@ const deleteShift = async (id: string) => {
 
 export const shiftService = {
   createShift,
+  getAllShiftsOrganizerName,
   getAllShifts,
   getSingleShift,
   updateShift,
