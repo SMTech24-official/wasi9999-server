@@ -176,6 +176,8 @@ const getUserShiftStatus = async (userId: string) => {
     notifications.push({
       type: "Need Attention",
       message: `${tomorrowShifts.length} shifts are scheduled for tomorrow. Are you prepared?`,
+      description:
+        "Your shifts are booked for tomorrow. Please review the details and make sure you're ready to go. Don't forget to check the exact location and start time.",
       shifts: tomorrowShifts.map((bs) => bs.shift),
     });
   }
@@ -208,6 +210,8 @@ const getUserShiftStatus = async (userId: string) => {
     notifications.push({
       type: "In Progress",
       message: `${todayShifts.length} shifts are ongoing today.`,
+      description:
+        "You have shifts scheduled for today. Remember to complete your timesheet and get it signed off by the organizer at the end of your shift to confirm your attendance and get paid on time.",
       shifts: todayShifts.map((bs) => bs.shift),
     });
   }
@@ -235,6 +239,8 @@ const getUserShiftStatus = async (userId: string) => {
     notifications.push({
       type: "In Progress",
       message: `${shiftsPendingPayment.length} shifts have been approved for payment.`,
+      description:
+        "Good news! Your timesheets for these shifts have been reviewed and approved. They are now queued for payment and will be processed in the next payroll batch.",
       shifts: shiftsPendingPayment.map((aw) => aw.bookShift.shift),
     });
   }
@@ -259,6 +265,8 @@ const getUserShiftStatus = async (userId: string) => {
     notifications.push({
       type: "Finalized",
       message: `${shiftsFinalized.length} shifts with payroll.`,
+      description:
+        "Your payroll is complete for these shifts. The funds have been processed and should be available in your account soon, depending on your bank's processing time.",
       shifts: shiftsFinalized.map((aw) => aw.bookShift.shift),
     });
   }
@@ -269,6 +277,7 @@ const getUserShiftStatus = async (userId: string) => {
     return {
       type: "No Active Shifts",
       message: "No shifts requiring attention at this time",
+      description: "You have no active shifts at this time.",
       shifts: [],
     };
   }
