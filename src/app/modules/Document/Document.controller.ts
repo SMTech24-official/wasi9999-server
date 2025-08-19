@@ -22,6 +22,18 @@ const createDocument = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getAllUserDocuments = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.user.id
+    const results = await documentService.getAllDocuments({...req.query, userId});
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Documents retrieved successfully",
+        meta:results.meta,
+        data: results.data,
+    });
+});
+
 const getAllDocuments = catchAsync(async (req: Request, res: Response) => {
     const results = await documentService.getAllDocuments(req.query);
     sendResponse(res, {
@@ -69,6 +81,7 @@ const deleteDocument = catchAsync(async (req: Request, res: Response) => {
 
 export const documentController = {
     createDocument,
+    getAllUserDocuments,
     getAllDocuments,
     getSingleDocument,
     updateDocument,

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { documentController } from "./Document.controller";
 import { fileUploader } from "../../../helpars/fileUploader";
 import auth from "../../middlewares/auth";
+import { UserRole } from "@prisma/client";
 
 const router = Router();
 
@@ -10,8 +11,11 @@ router.post("/add", auth(),
     fileUploader.upload.single("document"),
     documentController.createDocument);
 
-// get all document
-router.get("/", auth(), documentController.getAllDocuments);
+router.get("/user", auth(), documentController.getAllUserDocuments);
+    
+
+    // get all document
+router.get("/", auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), documentController.getAllDocuments);
 
 // get single document by id
 router.get("/:id", auth(), documentController.getSingleDocument);

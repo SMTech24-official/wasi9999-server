@@ -6,7 +6,7 @@ import { updateShiftStatuses } from "./utils/updateUserStatus";
 
 // Main function to start the server
 function main() {
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule("0 0 * * *", async () => {
     await updateShiftStatuses();
 
   });
