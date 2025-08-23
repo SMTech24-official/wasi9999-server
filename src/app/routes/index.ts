@@ -8,6 +8,7 @@ import { contactRoutes } from "../modules/Contact/Contact.route";
 import { documentRoutes } from "../modules/Document/Document.route";
 import { assignworkerRoutes } from "../modules/AssignWorker/AssignWorker.route";
 import { organizerRoutes } from "../modules/Organizer/Organizer.route";
+import { metricsRoutes } from "../modules/Metrics/Metrics.route";
 
 
 // import { paymentRoutes } from "../modules/Payment/payment.route";
@@ -48,6 +49,10 @@ const moduleRoutes = [
   {
     path: "/organizer",
     route: organizerRoutes,
+  },
+  {
+    path: "/metrics",
+    route: metricsRoutes,
   },
   
   

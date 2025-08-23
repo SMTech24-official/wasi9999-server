@@ -1,5 +1,5 @@
 export type TShift = {
-  readonly id: string;
+  userId: string;
   role: string;
   location: string;
   date: string; 

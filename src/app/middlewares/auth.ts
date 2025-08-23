@@ -43,7 +43,10 @@ const auth = (...roles: string[]) => {
       }
 
       if (roles.length && !roles.includes(verifiedUser.role)) {
-        throw new ApiError(httpStatus.FORBIDDEN, "Forbidden! Can't access this route");
+        throw new ApiError(
+          httpStatus.FORBIDDEN,
+          `Forbidden! Your role ${verifiedUser.role.toLowerCase()} is not allowed to access this route..!!`
+        );
       }
 
       req.user = verifiedUser;

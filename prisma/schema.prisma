@@ -12,7 +12,9 @@ model User {
   fullName    String
   email       String  @unique
   phoneNumber String
+  address     String?
   speciality  String?
+
 
   role         UserRole
   password     String
@@ -138,6 +140,7 @@ enum UserRole {
 }
 
 enum UserStatus {
+  PENDING
   ACTIVE
   BLOCKED
 }

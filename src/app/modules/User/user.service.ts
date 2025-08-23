@@ -22,7 +22,7 @@ const createOrganizer = async (payload: User) => {
     ...payload,
     password: hashedPassword,
     role: UserRole.ORGANIZER,
-    userStatus: UserStatus.ACTIVE,
+    userStatus: UserStatus.PENDING,
   };
 
   //create user
