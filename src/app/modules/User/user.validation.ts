@@ -17,6 +17,7 @@ const CreateUserValidationSchema = z.object({
 const UserLoginValidationSchema = z.object({
   body: z.object({
     email: z.string().email().nonempty("Email is required"),
+    fcmToken: z.string().optional(),
     password: z.string().nonempty("Password is required"),
   }),
 });

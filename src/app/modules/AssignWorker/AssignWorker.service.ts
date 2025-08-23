@@ -2,6 +2,7 @@ import prisma from "../../../shared/prisma";
 import QueryBuilder from "../../../helpars/queryBuilder";
 import ApiError from "../../../errors/ApiErrors";
 import httpStatus from "http-status";
+import { NotificationService } from "../Notification/Notification.service";
 
 const createAssignWorker = async (data: {
   organizerId: string;
@@ -66,6 +67,12 @@ const createAssignWorker = async (data: {
         status: "ASSIGNED",
       },
     });
+
+    await NotificationService.sendToUser(
+      bookingShift.userId,
+      "Your booking shift got assigned!",
+      `Role: ${bookingShift.shift.role} at ${bookingShift.shift.location} on ${bookingShift.shift.date}.`
+    );
     return assignWorker;
   });
   return result;
@@ -135,8 +142,8 @@ const getSingleAssignWorker = async (id: string) => {
         },
       },
       bookShift: {
-          select: {
-            status: true,
+        select: {
+          status: true,
           shift: {
             select: {
               role: true,

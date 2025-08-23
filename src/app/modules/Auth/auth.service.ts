@@ -8,8 +8,13 @@ import ApiError from "../../../errors/ApiErrors";
 import emailSender from "../../../helpars/emailSender";
 import { jwtHelpers } from "../../../helpars/jwtHelpers";
 import prisma from "../../../shared/prisma";
+import { NotificationService } from "../Notification/Notification.service";
 
-const loginUser = async (payload: { email: string; password: string }) => {
+const loginUser = async (payload: {
+  email: string;
+  password: string;
+  fcmToken?: string;
+}) => {
   const userData = await prisma.user.findUnique({
     where: {
       email: payload.email,
@@ -35,6 +40,10 @@ const loginUser = async (payload: { email: string; password: string }) => {
 
   if (!isCorrectPassword) {
     throw new Error("Password incorrect!");
+  }
+
+  if (payload.fcmToken) {
+    await NotificationService.saveToken(userData.id, payload.fcmToken);
   }
 
   if (userData.emailVerified) {
@@ -211,7 +220,7 @@ const getMyProfile = async (userId: string) => {
 const forgotPassword = async (payload: { email: string; otp: string }) => {
   const userData = await prisma.user.findUnique({
     where: {
-      email: payload.email
+      email: payload.email,
     },
   });
   if (!userData) {
@@ -283,7 +292,6 @@ const resetPassword = async (token: string, newPassword: string) => {
   });
   return { message: "Password reset successfully" };
 };
-
 
 // change password
 const changePassword = async (

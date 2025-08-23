@@ -1,11 +1,7 @@
 // Import the necessary modules from firebase-admin
 import admin from "firebase-admin";
-import path from "path";
+import { serviceAccount } from "../../config/serviceAccount";
 
-const serviceAccount = path.resolve(
-  __dirname,
-  "../../wasiapp-984c1-firebase-adminsdk-fbsvc-f27e070dca.json"
-);
 
 // Initialize the Firebase Admin SDK with your service account credentials
 admin.initializeApp({

@@ -3,6 +3,7 @@ import QueryBuilder from "../../../helpars/queryBuilder";
 import ApiError from "../../../errors/ApiErrors";
 import httpStatus from "http-status";
 import { TBookShift } from "./BookShift.interface";
+import { NotificationService } from "../Notification/Notification.service";
 
 const createBookShift = async (data: TBookShift) => {
   //if you wanna add logic here
@@ -26,6 +27,16 @@ const createBookShift = async (data: TBookShift) => {
       status: "APPLIED",
     },
   });
+
+    // notify shift owner
+    const shift = await prisma.shift.findUnique({ where: { id: data.shiftId } });
+    if (shift) {
+      await NotificationService.sendToUser(
+        shift.userId,
+        "Your shift got a booking!",
+        "A worker just applied to your shift."
+      );
+    }
   return result;
 };
 

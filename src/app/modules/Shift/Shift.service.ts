@@ -2,10 +2,17 @@ import prisma from "../../../shared/prisma";
 import QueryBuilder from "../../../helpars/queryBuilder";
 import ApiError from "../../../errors/ApiErrors";
 import httpStatus from "http-status";
+import { NotificationService } from "../Notification/Notification.service";
 
 const createShift = async (data: any) => {
   //if you wanna add logic here
   const result = await prisma.shift.create({ data });
+    // send push notification to all users
+    await NotificationService.sendToAll(
+      "New Shift Available!",
+      `Role: ${result.role} at ${result.location}`
+    );
+
   return result;
 };
 

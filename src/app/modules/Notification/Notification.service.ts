@@ -1,61 +1,73 @@
-// import { fcm } from "./firebase";
-// import prisma from "./prisma"; // your prisma client
+import prisma from "../../../shared/prisma";
+import { fcm } from "../../lib/firebase";
 
-// export const NotificationService = {
-//   // Save token for a user
-//   async saveToken(userId: string, token: string) {
-//     await prisma.user.update({
-//       where: { id: userId },
-//       data: {
-//         deviceTokens: {
-//           push: token,
-//         },
-//       },
-//     });
-//   },
+export const NotificationService = {
+  // Save token for a user
+  async saveToken(userId: string, token: string) {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        fcmToken: token,
+      },
+    });
+  },
 
-//   // Send notification to one user
-//   async sendToUser(userId: string, title: string, body: string) {
-//     const user = await prisma.user.findUnique({ where: { id: userId } });
+  // Send notification to one user
+  async sendToUser(userId: string, title: string, body: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId , shifAlert: true} });
 
-//     if (!user || !user.deviceTokens.length) {
-//       console.log("No tokens found for user", userId);
-//       return;
-//     }
+    if (!user || !user.fcmToken) {
+      console.log("No tokens found for user", userId);
+      return;
+    }
 
-//     const message = {
-//       notification: { title, body },
-//       tokens: user.deviceTokens,
-//     };
+    const message = {
+      notification: { title, body },
+      tokens: user.fcmToken,
+      condition: `'${user.fcmToken}' in topics`,
+    };
 
-//     const response = await fcm.sendMulticast(message);
-//     console.log("Notification sent:", response);
-//   },
+    const response = await fcm.send(message);
+    console.log("Notification sent:", response);
+    },
+  
 
-//   // Send broadcast notification to all users
-//   async sendToAll(title: string, body: string) {
-//     const users = await prisma.user.findMany({
-//       where: { deviceTokens: { isEmpty: false } },
-//     });
+  // Send broadcast notification to all users
+    async sendToAll(title: string, body: string) {
+        const users = await prisma.user.findMany({
+            where: { fcmToken: { not: null }, role: "USER" },
+        });
 
-//     const tokens = users.flatMap((u) => u.deviceTokens);
 
-//     if (!tokens.length) {
-//       console.log("No device tokens found");
-//       return;
-//     }
+        if (!users.length) {
+            console.log("No users found with tokens");
+            return;
+        }
+      
+        const fcmTokens = users.map((u) => u.fcmToken!)
 
-//     const message = {
-//       notification: { title, body },
-//       tokens,
-//     };
+        const message = {
+            notification: { title, body },
+            tokens: fcmTokens,
+        };
 
-//     const response = await fcm.sendMulticast(message);
-//     console.log("Broadcast sent:", response);
-//   },
-// };
-// import { NotificationService } from "./notification.service";
-// import prisma from "./prisma";
+        const response = await fcm.sendEachForMulticast(message);
+        console.log("Broadcast sent:", response);
+      
+
+        const failedTokens = response.responses
+            .map((res, idx) => (!res.success ? fcmTokens[idx] : null))
+            .filter((token): token is string => token !== null);
+
+        return {
+            successCount: response.successCount,
+            failureCount: response.failureCount,
+            failedTokens,
+        };
+
+
+    }
+};
 
 // export const createShift = async (req, res) => {
 //   const data = req.body;
@@ -70,8 +82,6 @@
 
 //   res.json({ success: true, shift });
 // };
-// import { NotificationService } from "./notification.service";
-// import prisma from "./prisma";
 
 // export const bookShift = async (req, res) => {
 //   const { userId, shiftId } = req.body;
