@@ -62,9 +62,7 @@ const getAllShifts = async (query: Record<string, any>, outlet: any) => {
     .filter()
     .rawFilter({
       user: {
-        fullName: {
-          in: outlet,
-        },
+        fullName: outlet,
       },
     })
     .sort()
