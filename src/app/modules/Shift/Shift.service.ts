@@ -55,7 +55,9 @@ const getAllShiftsRole = async () => {
   return uniqueRoles;
 };
 
-const getAllShifts = async (query: Record<string, any>, outlet: any) => {
+const getAllFutureShifts = async (query: Record<string, any>, outlet: any) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   const queryBuilder = new QueryBuilder(prisma.shift, query);
   const shifts = await queryBuilder
     .search(["role", "location", "startTime", "endTime"])
@@ -64,8 +66,41 @@ const getAllShifts = async (query: Record<string, any>, outlet: any) => {
       user: {
         fullName: outlet,
       },
+      date: {
+        gte: today,
+      },
     })
     .sort()
+    .paginate()
+    .fields()
+    .include({
+      user: {
+        select: {
+          id: true,
+          fullName: true,
+          email: true,
+          phoneNumber: true,
+          profileImage: true,
+        },
+      },
+    })
+    .execute();
+
+  const meta = await queryBuilder.countTotal();
+  return { meta, data: shifts };
+};
+
+const getAllShifts = async (query: Record<string, any>, outlet: any) => {
+  const queryBuilder = new QueryBuilder(prisma.shift, query);
+  const shifts = await queryBuilder
+    .search(["role", "location", "startTime", "endTime"])
+    .filter()
+    .sort()
+    .rawFilter({
+      user: {
+        fullName: outlet,
+      },
+    })
     .paginate()
     .fields()
     .include({
@@ -126,6 +161,7 @@ const deleteShift = async (id: string) => {
 
 export const shiftService = {
   createShift,
+  getAllFutureShifts,
   getAllShiftsOrganizerName,
   getAllShiftsRole,
   getAllShifts,

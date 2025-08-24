@@ -37,12 +37,23 @@ const getAllShiftsRole = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+const getAllMyShifts = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user.id; 
+  const results = await shiftService.getAllShifts({ ...req.query, userId }, undefined);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Shifts retrieved successfully",
+    meta: results.meta,
+    data: results.data,
+  });
+});
+
 const getAllShifts = catchAsync(async (req: Request, res: Response) => {
-
   const { role, outlet, ...restQuery } = req.query;
-
   const results = await shiftService.getAllShifts(
-    {  ...restQuery },
+    { ...restQuery },
     outlet ? outlet : undefined
   );
   sendResponse(res, {
@@ -86,6 +97,7 @@ const deleteShift = catchAsync(async (req: Request, res: Response) => {
 
 export const shiftController = {
   createShift,
+  getAllMyShifts,
   getAllShifts,
   getSingleShift,
   updateShift,
