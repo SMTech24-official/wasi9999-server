@@ -36,6 +36,15 @@ const createBookShift = async (data: TBookShift) => {
         "Your shift got a booking!",
         "A worker just applied to your shift."
       );
+      await prisma.notification.create({
+        data: {
+          userId: shift.userId,
+          entityId: result.id,
+          entityType: "BOOK_SHIFT",
+          title: "Your shift got a booking!",
+          message: "A worker just applied to your shift.",
+        },
+      })
     }
   return result;
 };

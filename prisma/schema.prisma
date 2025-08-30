@@ -15,7 +15,6 @@ model User {
   address     String?
   speciality  String?
 
-
   role         UserRole
   password     String
   profileImage String?
@@ -132,6 +131,18 @@ model Payment {
   // worker          User           @relation(fields: [workerId], references: [id])
 }
 
+model Notification {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String
+  entityId   String           @db.ObjectId
+  entityType NotificationType
+  title      String?
+  message    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum UserRole {
   ADMIN
   SUPER_ADMIN
@@ -146,9 +157,9 @@ enum UserStatus {
 }
 
 enum NotificationType {
-  ORDER
+  BOOK_SHIFT
+  ASSIGN_WORKER
   PAYMENT
-  BOOKING
 }
 
 enum BookingStatus {

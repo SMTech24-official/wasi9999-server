@@ -73,6 +73,16 @@ const createAssignWorker = async (data: {
       "Your booking shift got assigned!",
       `Role: ${bookingShift.shift.role} at ${bookingShift.shift.location} on ${bookingShift.shift.date}.`
     );
+
+    await prisma.notification.create({
+      data: {
+        userId: bookingShift.userId,
+        entityId: assignWorker.id,
+        entityType: "ASSIGN_WORKER",
+        title: "Your booking shift got assigned!",
+        message: `Role: ${bookingShift.shift.role} at ${bookingShift.shift.location} on ${bookingShift.shift.date}.`,
+      },
+    })
     return assignWorker;
   });
   return result;

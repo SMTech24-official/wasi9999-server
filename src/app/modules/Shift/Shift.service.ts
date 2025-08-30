@@ -28,6 +28,8 @@ const createShift = async (data: TShift) => {
     `Role: ${result.role} at ${result.location}`
   );
 
+  
+
   return result;
 };
 
