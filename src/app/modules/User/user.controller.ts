@@ -5,6 +5,7 @@ import { UserService } from "./user.service";
 import sendResponse from "../../../shared/sendResponse";
 import { User } from "@prisma/client";
 import config from "../../../config";
+import ApiError from "../../../errors/ApiErrors";
 
 const createOrganizer = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createOrganizer(req.body);
@@ -15,7 +16,6 @@ const createOrganizer = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.createUser(req.body);
@@ -44,7 +44,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   const updateData = req.body;
 
   if (req.file) {
-    updateData.profileImage = `${config.backend_image_url}/${req.file.filename}`
+    updateData.profileImage = `${config.backend_image_url}/${req.file.filename}`;
   }
 
   console.log(updateData, "updateData");
@@ -59,8 +59,23 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateOrganizerStatus = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.params.id;
+    const { status } = req.body;
+    if (!status) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Status is required");
+    }
+    const result = await UserService.updateOrganizerStatus(userId, status);
 
-
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: result.message,
+      data: result.data,
+    });
+  }
+);
 const blockUser = catchAsync(async (req: Request, res: Response) => {
   const userId = req.params.id;
   const result = await UserService.blockUser(userId);
@@ -102,6 +117,7 @@ export const UserController = {
   createUser,
   getUserById,
   updateUser,
+  updateOrganizerStatus,
   deleteUser,
   getAllUsers,
   blockUser,

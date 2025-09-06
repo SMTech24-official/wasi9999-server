@@ -43,6 +43,14 @@ router.patch(
 );
 
 
+// update organizer status by admin
+router.patch(
+  "/update-organizer-status/:id",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  UserController.updateOrganizerStatus
+);
+
+
 
 // block user
 router.patch(
