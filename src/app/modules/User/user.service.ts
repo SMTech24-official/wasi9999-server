@@ -214,11 +214,7 @@ const updateOrganizerStatus = async (id: string, status: UserStatus) => {
     throw new ApiError(httpStatus.NOT_FOUND, "This organizer not found");
   }
 
-  // Determine the new status
-  const newStatus =
-    user.userStatus === UserStatus.PENDING
-      ? UserStatus.ACTIVE
-      : UserStatus.BLOCKED;
+
 
   const result = await prisma.user.update({
     where: { id },
@@ -228,7 +224,7 @@ const updateOrganizerStatus = async (id: string, status: UserStatus) => {
   return {
     data: result,
     message:
-      newStatus === UserStatus.BLOCKED
+      status === UserStatus.BLOCKED
         ? "Organizer blocked successfully"
         : "Organizer activated successfully",
   };
