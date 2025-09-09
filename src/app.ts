@@ -15,7 +15,8 @@ export const corsOptions = {
     "http://localhost:3000",
     "http://localhost:5173",
     "http://localhost:3001",
-    "https://wasi-dashboard-frontend.vercel.app"
+    "https://wasi-dashboard-frontend.vercel.app",
+    "http://206.162.244.143:6458"
     
   ],
 
