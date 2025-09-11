@@ -6,6 +6,7 @@ import { assignworkerService } from "./AssignWorker.service";
 
 const createAssignWorker = catchAsync(async (req: Request, res: Response) => {
     const organizerId = req.user.id;
+    console.log("organizerId", organizerId);
     const { bookShiftId } = req.body;
     const result = await assignworkerService.createAssignWorker({
         organizerId,

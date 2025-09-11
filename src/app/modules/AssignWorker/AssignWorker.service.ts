@@ -68,11 +68,11 @@ const createAssignWorker = async (data: {
       },
     });
 
-    await NotificationService.sendToUser(
-      bookingShift.userId,
-      "Your booking shift got assigned!",
-      `Role: ${bookingShift.shift.role} at ${bookingShift.shift.location} on ${bookingShift.shift.date}.`
-    );
+    // await NotificationService.sendToUser(
+    //   bookingShift.userId,
+    //   "Your booking shift got assigned!",
+    //   `Role: ${bookingShift.shift.role} at ${bookingShift.shift.location} on ${bookingShift.shift.date}.`
+    // );
 
     await prisma.notification.create({
       data: {
